@@ -1,12 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { removeTodo, updateTodo } from "../features/todo/todoSlice";
 
-const Todo = () => {
-  const todos = useSelector((state) => state.todos);
+const Todos = () => {
   const dispatch = useDispatch();
+  const todos = useSelector((state) => state.todos);
+  const [updateTexts, setUpdateTexts] = useState({});
 
-  console.log("ok todos", todos);
+  const handleInputChange = (id, text) => {
+    setUpdateTexts((prev) => ({ ...prev, [id]: text }));
+  };
+
+  console.log("todos list", todos);
 
   return (
     <>
@@ -19,10 +24,22 @@ const Todo = () => {
           >
             <div className="text-white">{todo.text}</div>
 
+            <input
+              className="text-white bg-gray-700 px-2 py-1 rounded"
+              value={updateTexts[todo.id] ?? ""}
+              onChange={(e) => handleInputChange(todo.id, e.target.value)}
+              placeholder="Edit todo..."
+            />
+
             <button
-              onClick={() =>
-                dispatch(updateTodo({ todoId: todo.id, todoText: todo.text }))
-              }
+              onClick={() => {
+                dispatch(
+                  updateTodo({
+                    id: todo.id,
+                    text: updateTexts[todo.id] || todo.text,
+                  })
+                );
+              }}
               className="text-white bg-yellow-500 border-0 py-1 px-4 focus:outline-none hover:bg-red-600 rounded text-md"
             >
               Edit
@@ -53,4 +70,4 @@ const Todo = () => {
   );
 };
 
-export default Todo;
+export default Todos;
